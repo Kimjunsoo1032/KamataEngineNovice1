@@ -5,6 +5,7 @@ public:
 	Transform player_;
 	int speed_;
 	Bullet* bullet_;
+	int isAlive_;
 public:
 	Player();
 	~Player();

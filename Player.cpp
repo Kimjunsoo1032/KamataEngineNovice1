@@ -7,6 +7,7 @@ Player::Player() {
 	player_.radius = 0;
 	speed_ = 0;
 	bullet_ = new Bullet;
+	isAlive_ = true;
 }
 Player::~Player() {
 	delete bullet_;
@@ -46,6 +47,5 @@ void Player::Update(char* keys) {
 void Player::Draw() {
 
 	bullet_->Draw();
-
 	Novice::DrawEllipse(player_.x, player_.y, player_.radius, player_.radius, 0.0f, WHITE, kFillModeSolid);
 }

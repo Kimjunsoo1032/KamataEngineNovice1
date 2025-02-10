@@ -4,22 +4,20 @@
 EnemyA::EnemyA(){
 	posX_ = 300;
 	posY_ = 100;
-	speedX_ = 20;
-	speedY_ = 0;
+	speedX_ = 0;
+	speedY_ = 10;
 	radius_ = 20;
 	isAlive = true;
 	respwanTimer = 0;
 }
 
 void EnemyA::Update() {
-	if (posX_ >= 1280 - radius_) {
-		speedX_ = -20;
+	if (posY_ > 720) {
+		isAlive = false;
 	}
-
-	if (posX_ <= 0 + radius_) {
-		speedX_ = 20;
+	if (isAlive) {
+		posY_ += speedY_;
 	}
-	posX_ += speedX_;
 }
 
 void EnemyA::Draw() {
