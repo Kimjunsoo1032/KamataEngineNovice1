@@ -23,12 +23,6 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyA.cpp">
-      <Filter>KamataEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyB.cpp">
-      <Filter>KamataEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
@@ -119,8 +113,6 @@
       <Filter>KamataEngine\Include</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyA.h" />
-    <ClInclude Include="EnemyB.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>

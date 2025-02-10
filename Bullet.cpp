@@ -1,22 +1,30 @@
 #include "Novice.h"
 #include "Bullet.h"
-Bullet::Bullet() {
-	bullet_.x = -50;
-	bullet_.y = -50;
-	bullet_.radius = 10;
-	speed_ = 20;
-	isShot_ = false;
+Bullet::Bullet(float posX, float posY, int radius, int speed, bool isShot) {
+	posX_ = posX;
+	posY_ = posY;
+	speed_ = speed;
+	radius_ = radius;
+	isShot_ = isShot;
 }
-void Bullet::Update() {
-	if (isShot_ == true) {
-		bullet_.y -= speed_;
+void Bullet::Update(char* keys,int x, int y) {
+	if (isShot_) {
+		posY_ -= speed_;
 	}
-	if (bullet_.y <= 0) {
+	if (posY_ <= 0) {
 		isShot_ = false;
+	}
+	if (keys[DIK_SPACE]) {
+		if (!isShot_) {
+			isShot_ = true;
+			posX_ = float(x);
+			posY_ = float(y);
+		}
+
 	}
 }
 void Bullet::Draw() {
 	if (isShot_) {
-		Novice::DrawEllipse(bullet_.x, bullet_.y, bullet_.radius, bullet_.radius, 0.0f, RED, kFillModeSolid);
+		Novice::DrawEllipse((int)posX_, (int)posY_, radius_, radius_, 0.0f, RED, kFillModeSolid);
 	}
 }

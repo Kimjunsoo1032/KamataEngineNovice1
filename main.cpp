@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "EnemyA.h"
 #include "EnemyB.h"
+#include "Bullet.h"
 const char kWindowTitle[] = "GC1C_02_キム_ジュンス";
 const int kWindowWidth = 1280;
 const int kWindowHeight = 720;
@@ -32,18 +33,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int gameClearHandle = Novice::LoadTexture("./NoviceResources/gameClear.png");
 	int gameFailHandle = Novice::LoadTexture("./NoviceResources/gameFail.png");
 
-	Player* player = new Player();
-	player->player_.x = kWindowWidth / 2;
-	player->player_.y = 650;
-	player->player_.radius = 15;
-	player->speed_ = 10;
-	player->isAlive_ = true;
+	Player* player = new Player(kWindowWidth / 2, 650, 15, true, 10);
 
 
 	Enemy* enemy[2];
-	enemy[0] = new EnemyA;
-	enemy[1] = new EnemyB;
+	enemy[0] = new Enemy(200, 0, 15, 20, 0, true);
+	enemy[1] = new Enemy(800, 0, 15, 20, 0, true);
 
+	Bullet* bullet_ = new Bullet(0, 0, 5, 20, false);
 
 	int score = 0;
 
@@ -65,9 +62,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case TITLE:
 			//初期化
 			score = 0;
-			player->player_.x = kWindowWidth / 2;
-			player->player_.y = 650;
-			player->isAlive_ = true;
+			player->SetPosX(kWindowWidth / 2);
+			player->SetPosX(650);
+			player->SetIsAlive(true);
 
 			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
 				currentScene = GAME;
@@ -75,36 +72,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		case GAME:
 			player->Update(keys);
-
+			bullet_->Update(keys, (int)player->GetPosX(), (int)player->GetPosY());
 			for (int i = 0; i < 2; i++) {
-				if (enemy[i]->isAlive) {
+				if (enemy[i]->GetIsAlive()) {
 					enemy[i]->Update();
-					float distX = (float)enemy[i]->posX_ - (float)player->bullet_->bullet_.x;
-					float distY = (float)enemy[i]->posY_ - (float)player->bullet_->bullet_.y;
+					float distX = (float)enemy[i]->GetPosX() - (float)bullet_->GetPosX();
+					float distY = (float)enemy[i]->GetPosY() - (float)bullet_->GetPosY();
 					float dist = (distX * distX) + (distY * distY);
-					float radius = ((float)enemy[i]->radius_ + (float)player->bullet_->bullet_.radius);
-					if (dist <= radius * radius && player->bullet_->isShot_) {
-						enemy[i]->isAlive = false;
+					float radius = ((float)enemy[i]->GetRadius() + (float)bullet_->GetRadius());
+					if (dist <= radius * radius && bullet_->GetIsShot()) {
+						enemy[i]->SetIsAlive(false);
 						score += 1;
 					}
 
 				}
-				if (enemy[i]->isAlive == false && enemy[i]->respwanTimer < 100) {
-					enemy[i]->respwanTimer += 1;
-					if (enemy[i]->respwanTimer >= 100) {
-						enemy[i]->isAlive = true;
-						enemy[i]->respwanTimer = 0;
-						enemy[i]->posY_ = -enemy[i]->radius_;
+				if (enemy[i]->GetIsAlive()==false && enemy[i]->GetRespwanTimer() < 100) {
+					enemy[i]->SetRespwanTimer(enemy[i]->GetRespwanTimer()+1);
+					if (enemy[i]->GetRespwanTimer() >= 100) {
+						enemy[i]->SetIsAlive(true);
+						enemy[i]->SetRespwanTimer(0);
+						enemy[i]->SetPosY((float)-enemy[i]->GetRadius());
 					}
 				}
-				float distanceX = (float)enemy[i]->posX_ - (float)player->player_.x;
-				float distanceY = (float)enemy[i]->posY_ - (float)player->player_.y;
+				float distanceX = (float)enemy[i]->GetPosX() - (float)player->GetPosX();
+				float distanceY = (float)enemy[i]->GetPosY() - (float)player->GetPosY();
 				float distance = (distanceX * distanceX) + (distanceY * distanceY);
-				float disRadius = (float)player->player_.radius + (float)enemy[i]->radius_;
-				if (distance <= disRadius*disRadius) {
-					player->isAlive_ = false;
+				float disRadius = (float)player->GetRadius() + (float)enemy[i]->GetRadius();
+				if (distance <= disRadius * disRadius) {
+					player->SetIsAlive(false);
 				}
-				if (!player->isAlive_) {
+				if (!player->GetIsAlive()) {
 					currentScene = FAIL;
 				}
 			}
@@ -132,7 +129,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		/// 
-
 		switch (currentScene) {
 
 		case TITLE:
@@ -142,6 +138,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 0, inGameHandle, 1, 1, 0, WHITE);
 			player->Draw();
 
+			bullet_->Draw();
+
 			for (int i = 0; i < 2; i++) {
 				enemy[i]->Draw();
 			}
@@ -149,7 +147,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::ScreenPrintf(0, 40, "shot : SPACE");
 			Novice::ScreenPrintf(0, 60, "score : %d ( GOAL SCORE = 10 )", score);
 			for (int i = 0; i < 2; i++) {
-				Novice::ScreenPrintf(0, 80 + i * 20, "enemy respwanTimer: %d", enemy[i]->respwanTimer);
+				Novice::ScreenPrintf(0, 80 + i * 20, "enemy respwanTimer: %d", enemy[i]->GetRespwanTimer());
 			}break;
 		case CLEAR:
 			Novice::DrawSprite(0, 0, gameClearHandle, 1, 1, 0, WHITE);
